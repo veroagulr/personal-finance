@@ -222,3 +222,74 @@ logoutButton.addEventListener("click", function () {
     localStorage.removeItem("access_token");
     window.location.href = "index.html";
 });
+
+// ==========================================
+// OBTENER USUARIO AUTENTICADO
+// ==========================================
+
+async function loadCurrentUser() {
+
+    const token = localStorage.getItem("access_token");
+
+    // Si no existe token, regresar al login
+    if (!token) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/users/me",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) {
+
+            // Token inválido o expirado
+            localStorage.removeItem("access_token");
+
+            window.location.href = "index.html";
+
+            return;
+        }
+
+        const user = await response.json();
+
+        console.log("Usuario autenticado:", user);
+
+        // Mostrar nombre
+        document.getElementById("userName").textContent =
+            user.username;
+
+        // Mostrar correo
+        document.getElementById("userEmail").textContent =
+            user.email;
+
+        // Obtener primera letra del usuario
+        const initial =
+            user.username.charAt(0).toUpperCase();
+
+        document.getElementById("userAvatar").textContent =
+            initial;
+
+        document.getElementById("topUserAvatar").textContent =
+            initial;
+
+    } catch (error) {
+
+        console.error(
+            "Error al obtener el usuario:",
+            error
+        );
+    }
+}
+
+
+// Ejecutar al cargar el dashboard
+loadCurrentUser();

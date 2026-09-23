@@ -1126,3 +1126,34 @@ body {
     border-radius: 8px;
     font-weight: 500;
 }
+
+.password-requirements {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+    font-size: 13px;
+}
+
+.password-requirements li {
+    margin-bottom: 4px;
+}
+
+.valid {
+    color: #2e7d32;
+}
+
+.invalid {
+    color: #c62828;
+}
+
+#emailRequirement,
+#confirmRequirement {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+}
+.register-link, .login-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
