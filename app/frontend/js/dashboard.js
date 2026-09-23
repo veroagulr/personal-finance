@@ -8,6 +8,8 @@ document.addEventListener("componentsLoaded", function () {
         return;
     }
 
+    let expensesChart = null;
+
     async function loadFinancialSummary() {
     try {
         const response = await fetch(
@@ -70,19 +72,29 @@ document.addEventListener("componentsLoaded", function () {
 
         const chartCanvas = document.getElementById("expensesChart");
 
+        if (expensesChart) {
+            expensesChart.destroy();
+            expensesChart = null;
+        }
+
         if (Object.keys(categories).length > 0) {
-            new Chart(chartCanvas, {
+
+            expensesChart = new Chart(chartCanvas, {
                 type: "doughnut",
+
                 data: {
                     labels: Object.keys(categories),
+
                     datasets: [
                         {
                             data: Object.values(categories)
                         }
                     ]
                 },
+
                 options: {
                     responsive: true,
+
                     plugins: {
                         legend: {
                             position: "bottom"
