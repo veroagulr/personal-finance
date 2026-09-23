@@ -1,9 +1,14 @@
-const token = localStorage.getItem("access_token");
 
-if (!token) {
-    window.location.href = "index.html";
-}
-async function loadFinancialSummary() {
+document.addEventListener("componentsLoaded", function () {
+
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    async function loadFinancialSummary() {
     try {
         const response = await fetch(
             "http://127.0.0.1:8000/financial-summary",
@@ -290,6 +295,7 @@ async function loadCurrentUser() {
     }
 }
 
-
-// Ejecutar al cargar el dashboard
+loadFinancialSummary();
 loadCurrentUser();
+
+});
