@@ -116,4 +116,4 @@ pip install -r requirements.txt
 
 ## Autora
 
-Veronica Aguilar · Estudiante de Ingeniería de Sistemas · [GitHub](https://github.com/veroagulr) · [LinkedIn]([https://linkedin.com/in/tu-perfil](https://www.linkedin.com/in/veronica-aguilar-mendoza)
+Veronica Aguilar · Estudiante de Ingeniería de Sistemas · [GitHub](https://github.com/veroagulr) · [LinkedIn](www.linkedin.com/in/veronica-aguilar-mendoza-37a2a92a6)
