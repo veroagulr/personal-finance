@@ -1,288 +1,119 @@
-# 💰 Personal Finance API
+# Personal Finance API · FastAPI + PostgreSQL + JWT
 
-Aplicación web para la **gestión de finanzas personales**, desarrollada con **Python y FastAPI**. El proyecto permite administrar ingresos y gastos, gestionar usuarios y consultar información financiera desde una API REST conectada a PostgreSQL.
+API REST para la gestión de finanzas personales: permite registrar usuarios, administrar ingresos y gastos, consultar un resumen financiero y apoyarse en la API de OpenAI para analizar la información. Los datos se guardan en PostgreSQL, el acceso está protegido con autenticación JWT y la aplicación incluye una interfaz web para usarla desde el navegador.
 
-El proyecto forma parte de mi portafolio de desarrollo y tiene como objetivo aplicar y fortalecer conocimientos en **desarrollo backend, bases de datos, APIs REST, autenticación e integración con inteligencia artificial**.
+> **Estado: en desarrollo.** Es un proyecto de portafolio en evolución, con el que practico desarrollo backend, modelado de bases de datos, autenticación y consumo de servicios externos. Las funcionalidades listadas en el [estado del proyecto](#estado-del-proyecto-y-próximas-mejoras) pueden cambiar o ampliarse.
 
----
+<!-- Agrega una captura del dashboard en docs/dashboard.png y descomenta la línea:
+![Dashboard de finanzas](docs/dashboard.png)
+-->
 
-## 🚀 Funcionalidades
+## Arquitectura
 
-* 👤 Registro y gestión de usuarios.
-* 🔐 Autenticación mediante JWT.
-* 💵 Gestión de ingresos.
-* 💸 Gestión de gastos.
-* 📊 Consulta de resumen financiero.
-* 🤖 Integración con OpenAI API.
-* 🌐 Interfaz web para interactuar con la aplicación.
-* 🗄️ Persistencia de datos utilizando PostgreSQL.
-* 📚 Documentación automática de la API mediante Swagger UI.
-
----
-
-## 🏗️ Arquitectura
-
-El proyecto está organizado separando las principales responsabilidades de la aplicación:
-
-```text
-┌──────────────────────┐
-│      Frontend        │
-│   HTML / CSS / JS    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│       FastAPI        │
-│       REST API       │
-└──────────┬───────────┘
-           │
-     ┌─────┴─────┐
-     ▼           ▼
-┌─────────┐  ┌──────────┐
-│ Routers │  │ Security │
-└────┬────┘  └──────────┘
-     │
-     ▼
-┌──────────────────────┐
-│      SQLAlchemy      │
-│         ORM          │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│      PostgreSQL      │
-└──────────────────────┘
+```mermaid
+flowchart LR
+    A[Frontend: HTML, CSS y JS] --> B[FastAPI: API REST]
+    B --> C[Routers]
+    B --> D[Security: JWT]
+    B --> G[ai.py: OpenAI API]
+    C --> E[SQLAlchemy ORM]
+    E --> F[(PostgreSQL)]
 ```
 
----
+## Tecnologías
 
-## 🛠️ Tecnologías
+Python (FastAPI, SQLAlchemy, Pydantic, Uvicorn) · PostgreSQL (pgAdmin) · JWT (python-jose, python-dotenv) · OpenAI API · HTML, CSS y JavaScript · Git/GitHub
 
-### Backend
+## Estructura del repositorio
 
-* **Python**
-* **FastAPI**
-* **SQLAlchemy**
-* **Pydantic**
-* **Uvicorn**
-
-### Base de datos
-
-* **PostgreSQL**
-* **pgAdmin**
-
-### Autenticación y seguridad
-
-* **JWT**
-* **python-jose**
-* **python-dotenv**
-
-### Frontend
-
-* **HTML5**
-* **CSS3**
-* **JavaScript**
-
-### Inteligencia Artificial
-
-* **OpenAI API**
-
-### Control de versiones
-
-* **Git**
-* **GitHub**
-
----
-
-## 📂 Estructura del proyecto
-
-```text
+```
 personal-finance/
-│
 ├── app/
-│   ├── ai.py
-│   ├── database.py
-│   ├── main.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── security.py
-│   ├── __init__.py
-│   │
-│   ├── frontend/
-│   │   ├── index.html
-│   │   ├── dashboard.html
-│   │   │
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   │
-│   │   └── js/
-│   │       ├── app.js
-│   │       └── dashboard.js
-│   │
-│   └── routers/
-│       ├── users.py
-│       ├── expenses.py
-│       ├── incomes.py
-│       ├── summary.py
-│       └── __init__.py
-│
-├── .gitignore
+│   ├── main.py          # Punto de entrada de la aplicación
+│   ├── database.py      # Conexión y sesión de base de datos
+│   ├── models.py        # Modelos SQLAlchemy (tablas)
+│   ├── schemas.py       # Esquemas Pydantic (validación)
+│   ├── security.py      # Autenticación y JWT
+│   ├── ai.py            # Integración con OpenAI
+│   ├── routers/         # users, incomes, expenses, summary
+│   └── frontend/        # HTML, CSS y JavaScript
 ├── requirements.txt
 └── README.md
 ```
 
----
+## Modelo de datos
 
-## ⚙️ Instalación
+Tres entidades principales, gestionadas con SQLAlchemy:
 
-### 1. Clonar el repositorio
+- **Usuario**: credenciales y datos de acceso.
+- **Ingreso** y **Gasto**: movimientos financieros que pertenecen a un usuario.
+
+## Módulos de la API
+
+| Módulo | Archivo | Qué permite |
+|---|---|---|
+| Usuarios | `routers/users.py` | Registro, inicio de sesión y gestión de usuarios |
+| Ingresos | `routers/incomes.py` | Crear, consultar, actualizar y eliminar ingresos |
+| Gastos | `routers/expenses.py` | Crear, consultar, actualizar y eliminar gastos |
+| Resumen | `routers/summary.py` | Consulta resumida de los movimientos financieros |
+| IA | `ai.py` | Análisis de información financiera con OpenAI |
+
+La documentación interactiva de todos los endpoints se genera automáticamente con Swagger UI en `/docs`.
+
+## Decisiones de diseño
+
+- **Estructura modular:** un router por recurso, para que `main.py` se mantenga pequeño y sea fácil agregar funcionalidades.
+- **Modelos separados de esquemas:** `models.py` define cómo se guardan los datos y `schemas.py` qué entra y qué sale por la API, así no se exponen campos internos.
+- **ORM en lugar de SQL manual:** SQLAlchemy abstrae el acceso a datos y reduce el riesgo de inyección SQL.
+- **Credenciales fuera del código:** la clave del token, la conexión a la base de datos y la API key de OpenAI viven en variables de entorno.
+- **IA aislada en su propio módulo:** si cambia el proveedor, solo se modifica `ai.py`.
+
+## Cómo ejecutarlo
+
+Requisitos: Python 3.10+, PostgreSQL y una API key de OpenAI.
 
 ```bash
 git clone https://github.com/veroagulr/personal-finance.git
 cd personal-finance
-```
-
-### 2. Crear el entorno virtual
-
-```bash
 python -m venv venv
-```
-
-Activar el entorno virtual en Windows:
-
-```bash
 venv\Scripts\activate
-```
-
-### 3. Instalar las dependencias
-
-```bash
 pip install -r requirements.txt
 ```
 
----
+1. Crea una base de datos vacía en PostgreSQL (por ejemplo `personal_finance`).
+2. Crea un archivo `.env` en la raíz del proyecto:
 
-## 🔐 Configuración
+   ```env
+   DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/personal_finance
+   SECRET_KEY=una_clave_larga_y_aleatoria
+   OPENAI_API_KEY=tu_api_key
+   ```
 
-El proyecto utiliza variables de entorno para proteger información sensible.
+   El archivo `.env` está en `.gitignore`: nunca subas tus claves a GitHub.
+3. Ejecuta la aplicación: `fastapi dev app/main.py`
+4. Abre `http://127.0.0.1:8000` para la interfaz web y `http://127.0.0.1:8000/docs` para la documentación de la API.
 
-Crea un archivo `.env` en la raíz del proyecto:
+## Estado del proyecto y próximas mejoras
 
-```env
-OPENAI_API_KEY=tu_api_key
-```
+**Implementado**
 
-> ⚠️ No compartas ni subas tu API key a GitHub.
+- [x] Registro de usuarios y autenticación con JWT
+- [x] Gestión de ingresos y gastos
+- [x] Resumen financiero
+- [x] Integración con OpenAI API
+- [x] Interfaz web básica (acceso y dashboard)
+- [x] Documentación automática con Swagger UI
 
-El archivo `.env` está incluido en `.gitignore`.
+**En desarrollo / pendiente**
 
-También debes configurar la conexión a **PostgreSQL** de acuerdo con la configuración utilizada por el proyecto.
+- [ ] Mejorar el dashboard con gráficos
+- [ ] Filtros por fechas y categorías
+- [ ] Estadísticas y análisis de gastos
+- [ ] Ampliar las funcionalidades de IA
+- [ ] Pruebas automatizadas
+- [ ] Reforzar la seguridad (expiración y renovación de tokens)
+- [ ] Despliegue en la nube
 
----
+## Autora
 
-## ▶️ Ejecutar la aplicación
-
-Con el entorno virtual activado:
-
-```bash
-fastapi dev app/main.py
-```
-
-La API estará disponible en:
-
-```text
-http://127.0.0.1:8000
-```
-
-### 📚 Documentación de la API
-
-FastAPI genera automáticamente la documentación interactiva:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Desde Swagger UI se pueden consultar y probar los endpoints disponibles.
-
----
-
-## 📡 Módulos principales
-
-### 👤 Usuarios
-
-Permite gestionar los usuarios y el proceso de autenticación de la aplicación.
-
-### 💸 Gastos
-
-Permite registrar, consultar, actualizar y eliminar gastos.
-
-### 💵 Ingresos
-
-Permite gestionar los ingresos registrados por el usuario.
-
-### 📊 Resumen financiero
-
-Permite obtener información resumida sobre los movimientos financieros.
-
-### 🤖 Inteligencia Artificial
-
-El proyecto incorpora una integración con **OpenAI API** como parte de la implementación de funcionalidades inteligentes orientadas al análisis de información financiera.
-
----
-
-## 🔒 Seguridad
-
-La aplicación implementa mecanismos de autenticación mediante **JSON Web Tokens (JWT)**.
-
-Las credenciales y claves de servicios externos se gestionan mediante variables de entorno para evitar almacenarlas directamente en el código fuente.
-
----
-
-## 📈 Aprendizajes
-
-Durante el desarrollo de este proyecto estoy aplicando conocimientos relacionados con:
-
-* Diseño y desarrollo de APIs REST.
-* Desarrollo de aplicaciones backend con FastAPI.
-* Modelado y gestión de bases de datos.
-* ORM mediante SQLAlchemy.
-* Autenticación y autorización con JWT.
-* Manejo de variables de entorno.
-* Integración de servicios externos mediante APIs.
-* Desarrollo de interfaces web.
-* Organización modular de proyectos Python.
-* Control de versiones con Git y GitHub.
-
----
-
-## 🔮 Próximas mejoras
-
-El proyecto continuará evolucionando con nuevas funcionalidades, entre ellas:
-
-* 📊 Mejorar el dashboard financiero.
-* 🤖 Ampliar las funcionalidades de IA.
-* 📈 Incorporar análisis y estadísticas financieras.
-* 🔎 Agregar filtros por fechas y categorías.
-* 🧪 Implementar pruebas automatizadas.
-* 🔐 Mejorar los mecanismos de seguridad.
-* ☁️ Preparar el proyecto para despliegue en la nube.
-
----
-
-## 👩‍💻 Autora
-
-**Veronica Aguilar**
-
-Estudiante de **Ingeniería de Sistemas**, interesada en:
-
-* Desarrollo de software
-* Data Engineering
-* Automatización
-* Inteligencia Artificial
-* Bases de datos
-
-Este proyecto forma parte de mi portafolio personal y representa mi proceso de aprendizaje y desarrollo de aplicaciones orientadas a datos.
-
----
-
-⭐ **Proyecto en desarrollo**
+Veronica Aguilar · Estudiante de Ingeniería de Sistemas · [GitHub](https://github.com/veroagulr) · [LinkedIn](https://linkedin.com/in/tu-perfil)
